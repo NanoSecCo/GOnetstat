@@ -17,6 +17,7 @@ import (
     "strconv"
     "path/filepath"
     "regexp"
+    "github.com/justvisiting/hawthrone/gonanoshared"
 )
 
 
@@ -42,18 +43,6 @@ var STATE = map[string]string {
                             "0B": "CLOSING",
 }
 
-
-type Process struct {
-    User         string
-    Name         string
-    Pid          string
-    Exe          string
-    State        string
-    Ip           string
-    Port         int64
-    ForeignIp    string
-    ForeignPort  int64
-}
 
 
 func getData(t string) []string {
@@ -166,6 +155,15 @@ func findPid(inode string) string {
 }
 
 
+func getProcessCmdline(pid string) string {
+    fp := fmt.Sprintf("/proc/%s/cmdline", pid)
+    path, err := ioutil.ReadFile(fp)
+    if (err != nil) {
+        return string(path)
+    }
+    return ""
+}
+
 func getProcessExe(pid string) string {
     exe := fmt.Sprintf("/proc/%s/exe", pid)
     path, _ := os.Readlink(exe)
@@ -198,11 +196,11 @@ func removeEmpty(array []string) []string {
 }
 
 
-func netstat(t string) []Process {
+func netstat(t string) []gonanoshared.Process {
     // Return a array of Process with Name, Ip, Port, State .. etc
     // Require Root acess to get information about some processes.
 
-    var Processes []Process
+    var Processes []gonanoshared.Process
 
     data := getData(t)
 
@@ -224,8 +222,9 @@ func netstat(t string) []Process {
         pid := findPid(line_array[9])
         exe := getProcessExe(pid)
         name := getProcessName(exe)
+        cmdline := getProcessCmdline(pid)
 
-        p := Process{uid, name, pid, exe, state, ip, port, fip, fport}
+        p := gonanoshared.Process{User: uid, Name: name, Pid: pid, Exe: exe, Cmdline: cmdline, State: state, Ip: ip, Port: port,  ForeignIp: fip, ForeignPort:fport}
 
         Processes = append(Processes, p)
 
@@ -235,28 +234,28 @@ func netstat(t string) []Process {
 }
 
 
-func Tcp() []Process {
+func Tcp() []gonanoshared.Process {
     // Get a slice of Process type with TCP data
     data := netstat("tcp")
     return data
 }
 
 
-func Udp() []Process {
+func Udp() []gonanoshared.Process {
     // Get a slice of Process type with UDP data
     data := netstat("udp")
     return data
 }
 
 
-func Tcp6() []Process {
+func Tcp6() []gonanoshared.Process {
     // Get a slice of Process type with TCP6 data
     data := netstat("tcp6")
     return data
 }
 
 
-func Udp6() []Process {
+func Udp6() []gonanoshared.Process {
     // Get a slice of Process type with UDP6 data
     data := netstat("udp6")
     return data

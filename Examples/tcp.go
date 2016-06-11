@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "github.com/drael/GOnetstat"
+    "github.com/justvisiting/GOnetstat"
 )
 
 /* Get TCP information and show like netstat.
