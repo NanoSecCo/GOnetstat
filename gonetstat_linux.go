@@ -17,7 +17,7 @@ import (
     "strconv"
     "path/filepath"
     "regexp"
-    "github.com/nanosecco/node0/gonanoshared"
+    "github.com/nanosecco/hawthrone/gonanoshared"
 )
 
 
