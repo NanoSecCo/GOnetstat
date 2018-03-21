@@ -17,7 +17,7 @@ import (
     "strconv"
     "path/filepath"
     "regexp"
-    "github.com/nanosecco/hawthrone/gonanoshared"
+    "github.com/nanosecco/node0/gonanoshared"
 )
 
 
@@ -62,7 +62,6 @@ func getData(t string) []string {
         fmt.Printf("%s is a invalid type, tcp and udp only!\n", t)
         os.Exit(1)
     }
-
 
     data, err := ioutil.ReadFile(proc_t)
     if err != nil {
