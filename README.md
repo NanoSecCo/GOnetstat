@@ -39,3 +39,4 @@ udp6_data := GOnetstat.Udp6()
 ```
 The return will be a array of a Process struct like mentioned above.
 Still need to create a way to compress the ipv6 because is too long.
+# GOnetstat0
