@@ -54,11 +54,18 @@ func getNetStatData(proto string) ([]gonanoshared.Process){
 			return nil
 		}
 
+		var processExecutable, processName = "Unknown", "Unknown"
+
+		if p != nil{
+			processExecutable = p.Executable()
+			processName = getProcessNameFromExecutable(processExecutable)
+		}
+
 		processes = 
 		append(processes, gonanoshared.Process{
 				Pid: v.PID, 
-				Exe: p.Executable(),
-				Name: getProcessNameFromExecutable(p.Executable()),
+				Exe: processExecutable,
+				Name: processName,
 				State: v.State, 
 				Ip: v.LocalIP.String(), 
 				Port: v.LocalPort,
