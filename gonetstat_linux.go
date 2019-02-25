@@ -96,7 +96,10 @@ func convertIp(ip string) string {
 
     // Check ip size if greater than 8 is a ipv6 type
     if len(ip) > 8 {
-        i := []string{ ip[30:32],
+
+        if !isIPv4MappedIPv6(ip){
+            
+            i := []string{ ip[30:32],
                         ip[28:30],
                         ip[26:28],
                         ip[24:26],
@@ -112,11 +115,23 @@ func convertIp(ip string) string {
                         ip[4:6],
                         ip[2:4],
                         ip[0:2]}
-        out = fmt.Sprintf("%v%v:%v%v:%v%v:%v%v:%v%v:%v%v:%v%v:%v%v",
-                            i[14], i[15], i[13], i[12],
+            out = fmt.Sprintf("%v%v:%v%v:%v%v:%v%v:%v%v:%v%v:%v%v:%v%v",
+                            i[14], i[15], i[12], i[13],
                             i[10], i[11], i[8], i[9],
                             i[6],  i[7], i[4], i[5],
                             i[2], i[3], i[0], i[1])
+        } else {
+            // ipv4 mapped ipv6
+
+            i := []int64{
+                hexToDec(ip[30:32]),
+                hexToDec(ip[28:30]),
+                hexToDec(ip[26:28]),
+                hexToDec(ip[24:26]),
+            }
+
+            out = fmt.Sprintf("%v.%v.%v.%v", i[0], i[1], i[2], i[3])
+        }
 
     } else {
         i := []int64{ hexToDec(ip[6:8]),
@@ -126,7 +141,31 @@ func convertIp(ip string) string {
 
        out = fmt.Sprintf("%v.%v.%v.%v", i[0], i[1], i[2], i[3])
     }
+
    return out
+}
+
+
+func isIPv4MappedIPv6(ip string) bool {
+
+    for i, v := range ip {
+
+        if i < 16 {
+            if string(v) != "0" {
+                return false
+            }
+        } else if i < 20 {
+            if string(v) != "F" {
+                return false
+            }
+        } else if i < 24 {
+            if string(v) != "0" {
+                return false
+            }
+        }
+    }
+
+    return true
 }
 
 
