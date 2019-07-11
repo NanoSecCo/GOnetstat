@@ -218,6 +218,10 @@ func getProcessName(exe string) string {
 
 func getUser(uid string) string {
     u, _ := user.LookupId(uid)
+    if u == nil {
+        return "unknown"
+    }
+
     return u.Username
 }
 
